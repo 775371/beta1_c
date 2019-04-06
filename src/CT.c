@@ -239,6 +239,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     double beta_0 = 0.;    
     
     double z_hat_sum=0.; 
+
         
     for (i = 0; i < n; i++) {
         temp1 += *y[i] * wt[i] * treatment[i];
@@ -262,9 +263,26 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     tr_var = tr_sqr_sum / ttreat - temp1 * temp1 / (ttreat * ttreat);
     con_var = con_sqr_sum / (twt - ttreat) - temp0 * temp0 / ((twt - ttreat) * (twt - ttreat));
    
-   
+        int n = 3;  // rows
+	int m = 2;  // columns
+
+	double** X = matrix(n, m);  // inputs
+	double** y = matrix(n, 1);  // outputs
+
+	// test input
+	X[0][0] = 1;
+	X[0][1] = 3;
+	X[1][0] = 2;
+	X[1][1] = 4;
+	X[2][0] = 1;
+	X[2][1] = 6;
+
+	// test output
+	y[0][0] = 4;
+	y[1][0] = 1;
+	y[2][0] = 3;
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-   float** w = lstsq(n, m, X, y);  // weights
+   double** w = lstsq(n, m, X, y);  // weights
     
 	effect=w[2];
 	var_beta= 0;
