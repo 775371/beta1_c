@@ -123,6 +123,57 @@ void output(int n, int m, float** X, char* T) {
 	printf("\n");
 }
 
+/*
+* Linear Least Squares Optimization - Normal Equations Approach
+*
+* @param n: number of input rows
+* @param m: number of input columns
+* @param X: input matrix
+* @param y: output vector
+*
+* @return: linear weights
+*/
+float** lstsq(int n, int m, float** X, float** y) {
+
+	// TODO: include bias column
+
+	float** X_ = transpose(n, m, X);
+	float** A = product(m, n, n, m, X_, X);
+
+	printf("\n");
+	output(n, 1, y, "y");
+	output(n, m, X, "X");
+	output(m, n, X_, "X^T");
+	output(m, m, A, "A=X*X^T");
+
+	// non-square matrices do not have determinant
+	float d = determinant(m, A);
+	if (d == 0) {
+		printf("Matrix non-invertible.\n\n");
+		exit(-1);
+	}
+	else printf("Determinant: %.1f\n\n", d);
+
+	float** A_ = inverse(m, A);
+	float** B = product(m, m, m, n, A_, X_);
+	float** w = product(m, n, n, 1, B, y);
+
+	output(m, m, A_, "A^T");
+	output(m, n, B, "B=A^T*X^T");
+	output(m, 1, w, "B*y");
+
+	clear(n, X_);
+	clear(n, A);
+	clear(n, A_);
+	clear(n, B);
+
+	return w;
+}
+
+
+
+
+
 
 
 // start CT
@@ -213,8 +264,13 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
    
    
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-   
-    /*for (i = 0; i < n; i++) {
+   float** w = lstsq(n, m, X, y);  // weights
+    
+	effect=w[2];
+	var_beta= 0;
+	
+	
+	/*for (i = 0; i < n; i++) {
       z_hat_sum += (*y[i]-beta_0-beta_1*treatment[i])* (*y[i]-beta_0-beta_1*treatment[i]);
     }
      
