@@ -1,6 +1,131 @@
 /*
  * split.Rule = CT
  */
+// Linear regression
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+float** matrix(int n, int m) {
+	float **X;
+	X = malloc(n * sizeof(*X));
+	for (int i = 0; i < n; i++)
+		X[i] = malloc(m * sizeof(*X[i]));
+	return X;
+}
+
+void clear(int n, float** X) {
+	for (int i = 0; i < n; i++)
+		free(X[i]);
+	free(X);
+}
+
+float** transpose(int n, int m, float** X) {
+	float** X_ = matrix(m, n);
+	for (size_t i = 0; i < m; i++) {
+		for (size_t j = 0; j < n; j++) {
+			X_[i][j] = X[j][i];
+		}
+	}
+	return X_;
+}
+
+float** product(int n, int m, int p, int q, float** A, float** B) {
+	float** C = matrix(n, q);
+
+	for (size_t i = 0; i < n; i++)
+		for (size_t j = 0; j < q; j++)
+			C[i][j] = 0;
+
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < q; j++) {
+			for (size_t k = 0; k < p; k++) {
+				C[i][j] += A[i][k] * B[k][j];
+			}
+		}
+	}
+
+	return C;
+}
+
+void identity(int n, int m, float** X) {
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < m; j++) {
+			if (i == j) X[i][j] = 1;
+			else X[i][j] = 0;
+		}
+	}
+}
+
+float** get_minor(int row, int col, int n, float** M) {
+	int k = 0;
+	int l = 0;
+	int s = n - 1;
+	float** m = matrix(s, s);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (i != row && j != col) {
+				m[k][l] = M[i][j]; l++;
+			}
+		}
+		if (i != row) k++;
+		l = 0;
+	}
+	return m;
+}
+
+float determinant(int n, float** M) {
+	if (n == 2)
+		return (M[0][0] * M[1][1]) - (M[0][1] * M[1][0]);
+
+	float det = 0;
+	for (size_t j = 0; j < n; j++) {
+		float** m = get_minor(0, j, n, M);
+		det += pow((-1), j)*M[0][j] * determinant(n - 1, m);
+		clear(n, m);
+	}
+	return det;
+}
+
+float** inverse(int n, float** M) {
+	float** C = matrix(n, n);
+	float d = determinant(n, M);
+
+	if (n == 2) {
+		C[0][0] = M[1][1] / d;
+		C[0][1] = (-1)*M[0][1] / d;
+		C[1][0] = (-1)*M[1][0] / d;
+		C[1][1] = M[0][0] / d;
+		return C;
+	}
+
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < n; j++) {
+			float** m = get_minor(i, j, n, M);
+			C[i][j] = (pow((-1), i + j)*determinant(n - 1, m)) / d;
+		}
+	}
+
+	float** A = transpose(n, n, C);
+	clear(n, C);
+	return A;
+}
+
+void output(int n, int m, float** X, char* T) {
+	printf("%s\n---\n", T);
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < m; j++) {
+			if (j == m - 1) printf("%.2f", X[i][j]);
+			else printf("%.2f, ", X[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+
+
+// start CT
 #include <math.h>
 #include "causalTree.h"
 #include "causalTreeproto.h"
@@ -87,9 +212,9 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     con_var = con_sqr_sum / (twt - ttreat) - temp0 * temp0 / ((twt - ttreat) * (twt - ttreat));
    
    
-    /* Y= beta_0 + beta_1 treatment , ONLY one pair*/
+    /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
    
-    for (i = 0; i < n; i++) {
+    /*for (i = 0; i < n; i++) {
       z_hat_sum += (*y[i]-beta_0-beta_1*treatment[i])* (*y[i]-beta_0-beta_1*treatment[i]);
     }
      
@@ -98,7 +223,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     effect = beta_1;
     beta_sqr_sum = beta_1 * beta_1 ;
         
-    var_beta = (z_hat_sum/(twt-2))/(yy_sum - y_sum * y_sum/twt) ;
+    var_beta = (z_hat_sum/(twt-2))/(yy_sum - y_sum * y_sum/twt) ;*/
         
     *tr_mean = temp1 / ttreat;
     *con_mean = temp0 / (twt - ttreat);
