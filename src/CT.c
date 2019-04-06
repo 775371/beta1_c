@@ -266,8 +266,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
         int n = 3;  // rows
 	int m = 2;  // columns
 
-	double** X = matrix(n, m);  // inputs
-	double** y = matrix(n, 1);  // outputs
+	float** X = matrix(n, m);  // inputs
+	float** y = matrix(n, 1);  // outputs
 
 	// test input
 	X[0][0] = 1;
@@ -282,8 +282,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	y[1][0] = 1;
 	y[2][0] = 3;
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-   double** w = lstsq(n, m, X, y);  // weights
-    double beta[5][5]=output(m, 1, w,  "B*y");
+   float** w = lstsq(n, m, X, y);  // weights
+    double beta[5][5]= (double) output(m, 1, w,  "B*y");
 	effect=beta[0][0];
 	var_beta= 0;
 	
