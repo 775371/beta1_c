@@ -295,8 +295,9 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	double** A_ = inverse(m, A);
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
+	double** I=0;
 	double** IH= I-H;
-	int i, j,  sum1 = 0., a = 0., normal;
+	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
         {
             for (j = 0; j < m; ++j)
