@@ -264,7 +264,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     tr_var = tr_sqr_sum / ttreat - temp1 * temp1 / (ttreat * ttreat);
     con_var = con_sqr_sum / (twt - ttreat) - temp0 * temp0 / ((twt - ttreat) * (twt - ttreat));
    
-        int n = 3;  // rows
+       // int n = 3;  // rows
 	int m = 2;  // columns
 
 	double** X = matrix(n, m);  // inputs
