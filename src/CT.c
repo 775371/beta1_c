@@ -284,7 +284,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	y[2][0] = 3;
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
     double** w = lstsq(n, m, X, y);  // weights
-    double beta[5][5]=  w;
+    double beta[5][5]=  **w;
 	effect=beta[0][0];
 	var_beta= 0;
 	
