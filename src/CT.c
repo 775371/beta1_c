@@ -2,26 +2,28 @@
  * split.Rule = CT
  */
 // Linear regression
+/* @author: gregorydhill */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-float** matrix(int n, int m) {
-	float **X;
+double** matrix(int n, int m) {
+	double **X;
 	X = malloc(n * sizeof(*X));
 	for (int i = 0; i < n; i++)
 		X[i] = malloc(m * sizeof(*X[i]));
 	return X;
 }
 
-void clear(int n, float** X) {
+void clear(int n, double** X) {
 	for (int i = 0; i < n; i++)
 		free(X[i]);
 	free(X);
 }
 
-float** transpose(int n, int m, float** X) {
-	float** X_ = matrix(m, n);
+double** transpose(int n, int m, double** X) {
+	double** X_ = matrix(m, n);
 	for (size_t i = 0; i < m; i++) {
 		for (size_t j = 0; j < n; j++) {
 			X_[i][j] = X[j][i];
@@ -30,8 +32,8 @@ float** transpose(int n, int m, float** X) {
 	return X_;
 }
 
-float** product(int n, int m, int p, int q, float** A, float** B) {
-	float** C = matrix(n, q);
+double** product(int n, int m, int p, int q, double** A, double** B) {
+	double** C = matrix(n, q);
 
 	for (size_t i = 0; i < n; i++)
 		for (size_t j = 0; j < q; j++)
@@ -48,7 +50,7 @@ float** product(int n, int m, int p, int q, float** A, float** B) {
 	return C;
 }
 
-void identity(int n, int m, float** X) {
+void identity(int n, int m, double** X) {
 	for (size_t i = 0; i < n; i++) {
 		for (size_t j = 0; j < m; j++) {
 			if (i == j) X[i][j] = 1;
@@ -57,11 +59,11 @@ void identity(int n, int m, float** X) {
 	}
 }
 
-float** get_minor(int row, int col, int n, float** M) {
+double** get_minor(int row, int col, int n, double** M) {
 	int k = 0;
 	int l = 0;
 	int s = n - 1;
-	float** m = matrix(s, s);
+	double** m = matrix(s, s);
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			if (i != row && j != col) {
@@ -74,22 +76,22 @@ float** get_minor(int row, int col, int n, float** M) {
 	return m;
 }
 
-float determinant(int n, float** M) {
+double determinant(int n, double** M) {
 	if (n == 2)
 		return (M[0][0] * M[1][1]) - (M[0][1] * M[1][0]);
 
-	float det = 0;
+	double det = 0;
 	for (size_t j = 0; j < n; j++) {
-		float** m = get_minor(0, j, n, M);
+		double** m = get_minor(0, j, n, M);
 		det += pow((-1), j)*M[0][j] * determinant(n - 1, m);
 		clear(n, m);
 	}
 	return det;
 }
 
-float** inverse(int n, float** M) {
-	float** C = matrix(n, n);
-	float d = determinant(n, M);
+double** inverse(int n, double** M) {
+	double** C = matrix(n, n);
+	double d = determinant(n, M);
 
 	if (n == 2) {
 		C[0][0] = M[1][1] / d;
@@ -101,17 +103,17 @@ float** inverse(int n, float** M) {
 
 	for (size_t i = 0; i < n; i++) {
 		for (size_t j = 0; j < n; j++) {
-			float** m = get_minor(i, j, n, M);
+			double** m = get_minor(i, j, n, M);
 			C[i][j] = (pow((-1), i + j)*determinant(n - 1, m)) / d;
 		}
 	}
 
-	float** A = transpose(n, n, C);
+	double** A = transpose(n, n, C);
 	clear(n, C);
 	return A;
 }
 
-void output(int n, int m, float** X, char* T) {
+void output(int n, int m, double** X, char* T) {
 	printf("%s\n---\n", T);
 	for (size_t i = 0; i < n; i++) {
 		for (size_t j = 0; j < m; j++) {
@@ -133,12 +135,12 @@ void output(int n, int m, float** X, char* T) {
 *
 * @return: linear weights
 */
-float** lstsq(int n, int m, float** X, float** y) {
+double** lstsq(int n, int m, double** X, double** y) {
 
 	// TODO: include bias column
 
-	float** X_ = transpose(n, m, X);
-	float** A = product(m, n, n, m, X_, X);
+	double** X_ = transpose(n, m, X);
+	double** A = product(m, n, n, m, X_, X);
 
 	printf("\n");
 	output(n, 1, y, "y");
@@ -147,16 +149,16 @@ float** lstsq(int n, int m, float** X, float** y) {
 	output(m, m, A, "A=X*X^T");
 
 	// non-square matrices do not have determinant
-	float d = determinant(m, A);
+	double d = determinant(m, A);
 	if (d == 0) {
 		printf("Matrix non-invertible.\n\n");
 		exit(-1);
 	}
 	else printf("Determinant: %.1f\n\n", d);
 
-	float** A_ = inverse(m, A);
-	float** B = product(m, m, m, n, A_, X_);
-	float** w = product(m, n, n, 1, B, y);
+	double** A_ = inverse(m, A);
+	double** B = product(m, m, m, n, A_, X_);
+	double** w = product(m, n, n, 1, B, y);
 
 	output(m, m, A_, "A^T");
 	output(m, n, B, "B=A^T*X^T");
@@ -169,7 +171,6 @@ float** lstsq(int n, int m, float** X, float** y) {
 
 	return w;
 }
-
 
 
 
@@ -266,8 +267,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
         int n = 3;  // rows
 	int m = 2;  // columns
 
-	float** X = matrix(n, m);  // inputs
-	float** y = matrix(n, 1);  // outputs
+	double** X = matrix(n, m);  // inputs
+	double** y = matrix(n, 1);  // outputs
 
 	// test input
 	X[0][0] = 1;
@@ -282,8 +283,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	y[1][0] = 1;
 	y[2][0] = 3;
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-   float** w = lstsq(n, m, X, y);  // weights
-    double beta[5][5]= (double) output(m, 1, w,  "B*y");
+    double** w = lstsq(n, m, X, y);  // weights
+    double beta[5][5]=  output(m, 1, w,  "B*y");
 	effect=beta[0][0];
 	var_beta= 0;
 	
