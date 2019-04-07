@@ -288,7 +288,26 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     double** w = lstsq(n, m, X, z);  // weights
     
 	effect=w[0][0];
-	var_beta= 0;
+	double** yt = transpose(n, 1, y);
+	
+	double** X_ = transpose(n, m, X);
+	double** A = product(m, n, n, m, X_, X);
+	double** A_ = inverse(m, A);
+	double** B = product(m, m, m, n, A_, X_);
+	double** H = product(n, m, m, n, X, B);
+	double** IH= I-H;
+	for (i = 0; i < n; ++i) 
+        {
+            for (j = 0; j < m; ++j)
+            {
+                scanf("%d", &IH[i][j]);
+                a = IH[i][j] * IH[i][j];
+                sum1 = sum1 + a;
+            }
+        }
+	normal = sum1;
+        printf("The normal square of the given matrix is = %d\n", normal)
+	var_beta=normal/(n-m-1) ;
 	
 	
 	/*for (i = 0; i < n; i++) {
