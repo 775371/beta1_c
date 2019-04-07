@@ -296,6 +296,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
 	double** IH= I-H;
+	double i, j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
         {
             for (j = 0; j < m; ++j)
@@ -305,7 +306,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
                 sum1 = sum1 + a;
             }
         }
-	double normal = sum1;
+	normal = sum1;
         Rprintf("The normal square of the given matrix is = %d\n", normal);
 	var_beta=normal/(n-m-1) ;
 	
