@@ -135,7 +135,7 @@ void output(int n, int m, double** X, char* T) {
 *
 * @return: linear weights
 */
-double** lstsq(int n, int m, double** X, double** y) {
+double** lstsq(int n, int m, double** X, double** z) {
 
 	// TODO: include bias column
 
@@ -143,7 +143,7 @@ double** lstsq(int n, int m, double** X, double** y) {
 	double** A = product(m, n, n, m, X_, X);
 
 	printf("\n");
-	output(n, 1, y, "y");
+	output(n, 1, z, "y");
 	output(n, m, X, "X");
 	output(m, n, X_, "X^T");
 	output(m, m, A, "A=X*X^T");
@@ -158,7 +158,7 @@ double** lstsq(int n, int m, double** X, double** y) {
 
 	double** A_ = inverse(m, A);
 	double** B = product(m, m, m, n, A_, X_);
-	double** w = product(m, n, n, 1, B, y);
+	double** w = product(m, n, n, 1, B, z);
 
 	output(m, m, A_, "A^T");
 	output(m, n, B, "B=A^T*X^T");
@@ -268,7 +268,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	int m = 2;  // columns
 
 	double** X = matrix(n, m);  // inputs
-	double** y = matrix(n, 1);  // outputs
+	double** z = matrix(n, 1);  // outputs
 
 	// test input
 	X[0][0] = 1;
@@ -279,11 +279,13 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	X[2][1] = 6;
 
 	// test output
-	y[0][0] = 4;
-	y[1][0] = 1;
-	y[2][0] = 3;
+	z[0][0] = 4;
+	z[1][0] = 1;
+	z[2][0] = 3;
+
+	
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-    double** w = lstsq(n, m, X, y);  // weights
+    double** w = lstsq(n, m, X, z);  // weights
     double beta[5][5]=  **w;
 	effect=beta[0][0];
 	var_beta= 0;
