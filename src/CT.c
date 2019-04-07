@@ -305,7 +305,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
                 sum1 = sum1 + a;
             }
         }
-	normal = sum1;
+	double normal = sum1;
         printf("The normal square of the given matrix is = %d\n", normal)
 	var_beta=normal/(n-m-1) ;
 	
