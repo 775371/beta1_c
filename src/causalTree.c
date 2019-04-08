@@ -31,6 +31,7 @@
  *      cost = nost
  *      xvar = vector of x features variance in column
  *      alpha = weight parameter for error function 
+ *      matrix  = matrix of control and treatment variables
  *
  * Returned: a list with elements
  *      which = vector of final node numbers for each input obs
