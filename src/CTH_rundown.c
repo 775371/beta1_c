@@ -91,7 +91,7 @@ CTH_rundown(pNode tree, int obs, double *cp, double *xpred, double *xtemp, int k
             con_var = con_sqr_sum / cons - con_mean * con_mean;
         }
         
-        xtemp[i] = (*ct_xeval)(ct.ydata[obs2], ct.wt[obs2], ct.treatment[obs2], tr_mean, 
+        xtemp[i] = (*ct_xeval)(ct.ydata[obs2], ct.wt[obs2], ct.treatment[obs2], ct.matrix[obs2], tr_mean, 
                     con_mean, trs, cons, alpha, xtrain_to_est_ratio, propensity);
     }
     return;
@@ -101,7 +101,7 @@ oops:;
 	for (i = 0; i < ct.num_unique_cp; i++)
 	    xpred[i] = otree->response_est[0];
 
-	xtemp[i] = (*ct_xeval)(ct.ydata[obs2], ct.wt[obs2], ct.treatment[obs2], tr_mean, con_mean);
+	xtemp[i] = (*ct_xeval)(ct.ydata[obs2], ct.wt[obs2], ct.treatment[obs2], ct.matrix[obs2], tr_mean, con_mean);
 	Rprintf("oops number %d.\n", opnumber++);
   return;
     }
