@@ -50,14 +50,18 @@ double** product(int n, int m, int p, int q, double** A, double** B) {
 	return C;
 }
 
-void identity(int n, int m, double** X) {
+double** identity(int n, int m, double** X) {
+	double** I = matrix(n, m);
 	for (size_t i = 0; i < n; i++) {
 		for (size_t j = 0; j < m; j++) {
-			if (i == j) X[i][j] = 1;
-			else X[i][j] = 0;
+			if (i == j) 
+				I[i][j] = 1;
+			else I[i][j] = 0;
 		}
 	}
+	return I;
 }
+
 
 double** get_minor(int row, int col, int n, double** M) {
 	int k = 0;
@@ -295,8 +299,9 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	double** A_ = inverse(m, A);
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
-	double** I=0;
+	double** I=identity(n,n,X);
 	double** IH= I-H;
+	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
         {
@@ -311,7 +316,9 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
         Rprintf("The normal square of the given matrix is = %d\n", normal);
 	var_beta=normal/(n-m-1) ;
 	
-	
+	beta_1=w[0][0];
+	Rprintf("beta_1 is = %d\n", beta_1);
+	effect=beta_1;
 	/*for (i = 0; i < n; i++) {
       z_hat_sum += (*y[i]-beta_0-beta_1*treatment[i])* (*y[i]-beta_0-beta_1*treatment[i]);
     }
@@ -380,7 +387,10 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
     double  y_sum = 0., z_sum = 0.;
     double yz_sum = 0.,  yy_sum = 0., zz_sum = 0.;
     double z_hat_sum=0.;
-        
+// define right_X left_X
+    double** right_X;
+    double** left_X;
+	
     for (i = 0; i < n; i++) {
         right_wt += wt[i];
         right_tr += wt[i] * treatment[i];
@@ -396,11 +406,45 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
        
         right_yy_sum += treatment[i] * treatment[i];
         right_zz_sum += *y[i] * *y[i];
+	    //matrix
+	
+     
     }
 
-    //Rprintf("The nclass in function CT in CT.c is %d\n",(int)nclass);  
+    double** w = lstsq(n, m, X, z);  // weights
+    
+	
+	double** yt = transpose(n, 1, y);
+	
+	double** X_ = transpose(n, m, X);
+	double** A = product(m, n, n, m, X_, X);
+	double** A_ = inverse(m, A);
+	double** B = product(m, m, m, n, A_, X_);
+	double** H = product(n, m, m, n, X, B);
+	double** I=identity(n,n,X);
+	double** IH= I-H;
+	//SSE=Y^T[I-H]Y
+	int  j,  sum1 = 0., a = 0., normal;
+	for (i = 0; i < n; ++i) 
+        {
+            for (j = 0; j < m; ++j)
+            {
+                scanf("%d", &IH[i][j]);
+                a = IH[i][j] * IH[i][j];
+                sum1 = sum1 + a;
+            }
+        }
+	normal = sum1;
+        Rprintf("The normal square of the given matrix is = %d\n", normal);
+	var_beta=normal/(n-m-1) ;
+	
+	
+	beta_1=w[0][0];
+	Rprintf("beta_1 is = %d\n", beta_1);
         
-        
+        temp = beta_1; 
+	
+     /*   
     beta_1 = (right_wt * right_yz_sum - right_z_sum * right_y_sum) / (right_wt * right_yy_sum - right_y_sum * right_y_sum);
     beta_0 = (right_z_sum - beta_1 * right_y_sum) / right_wt;
     
@@ -410,10 +454,8 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
       z_hat_sum += (*y[i]-beta_0-beta_1*treatment[i]) * (*y[i]-beta_0-beta_1*treatment[i]);
     }
      
-        
-    var_beta = (z_hat_sum/(right_wt-2)) / (right_yy_sum-right_y_sum * right_y_sum/right_wt) ;
-        
-    temp = beta_1;  
+        */
+    
         
     //var_beta = beta_sqr_sum / right_wt - beta_1 * beta_1 / (right_wt * right_wt);
     //temp = right_tr_sum / right_tr - (right_sum - right_tr_sum) / (right_wt - right_tr);
@@ -441,6 +483,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
         left_tr_sqr_sum = 0;
         best = 0;
         
+	
         for (i = 0; right_n > edge; i++) {
        
             left_wt += wt[i];
@@ -474,6 +517,14 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
             left_zz_sum += *y[i] * *y[i];
             right_zz_sum -= *y[i] * *y[i];
             
+		
+		
+	//matrix right left
+	for ( int j = 0; j < col; j++ )
+    {
+	    right_X[i][j]= right_X[i+1][j];
+	    left_X[i][j] = X[i][j];
+     }       
                 /* change treatment */
            /* if (x[i + 1] != x[i] && left_n >= edge &&
                 (int) left_tr >= min_node_size &&
@@ -484,20 +535,56 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
                if (x[i + 1] != x[i] && left_n >= edge &&
                 (int) left_wt >= min_node_size &&
                 (int) right_wt  >= min_node_size) {
-                     
+		       
+    /*                 
     beta_1 = (left_wt * left_yz_sum - left_z_sum * left_y_sum) / (left_wt * left_yy_sum - left_y_sum * left_y_sum);
     beta_0 = (left_z_sum - beta_1 * left_y_sum) / left_wt;
     
     beta_sqr_sum = beta_1 * beta_1 ;
     
                
-    //z_hat_sum += (*y[i]-beta_0-beta_1*treatment[i]) * (*y[i]-beta_0-beta_1*treatment[i]);
+    z_hat_sum += (*y[i]-beta_0-beta_1*treatment[i]) * (*y[i]-beta_0-beta_1*treatment[i]);
      
                        
     var_beta = (z_hat_sum/(left_wt-2)) / (left_yy_sum -left_y_sum * left_y_sum/left_wt) ;
                  
     //var_beta = beta_sqr_sum / left_wt - beta_1 * beta_1 / (left_wt * left_wt);
+    */
     
+double** w = lstsq(n, m, left_X, z);  // weights
+    
+	
+	double** yt = transpose(n, 1, y);
+	
+	double** LEFT_X_ = transpose(n, m, left_X);
+	double** A = product(m, n, n, m, left_X_, left_X);
+	double** A_ = inverse(m, A);
+	double** B = product(m, m, m, n, A_, left_X_);
+	double** H = product(n, m, m, n, left_X, B);
+	double** I=identity(n,n, left_X);
+	double** IH= I-H;
+	//SSE=Y^T[I-H]Y
+	int  j,  sum1 = 0., a = 0., normal;
+	for (i = 0; i < n; ++i) 
+        {
+            for (j = 0; j < m; ++j)
+            {
+                scanf("%d", &IH[i][j]);
+                a = IH[i][j] * IH[i][j];
+                sum1 = sum1 + a;
+            }
+        }
+	normal = sum1;
+        Rprintf("The normal square of the given matrileft_X is = %d\n", normal);
+	var_beta=normal/(n-m-1) ;
+	
+
+	
+	beta_1=w[0][0];
+	Rprintf("left beta_1 is = %d\n", beta_1);
+
+
+       		   
     left_temp = beta_1;
     left_effect = left_temp * left_temp * left_wt - (1 - alpha) * (1 + train_to_est_ratio) 
                     * left_wt * (var_beta);
@@ -511,7 +598,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
                 left_effect = alpha * left_temp * left_temp * left_wt
                         - (1 - alpha) * (1 + train_to_est_ratio) * left_wt 
                     * (left_tr_var / left_tr + left_con_var / (left_wt - left_tr));*/         
-
+/*
     beta_1 = (right_wt * right_yz_sum - right_z_sum * right_y_sum) / (right_wt * right_yy_sum - right_y_sum * right_y_sum);
     beta_0 = (right_z_sum - beta_1 * right_y_sum) / right_wt;
     
@@ -522,7 +609,45 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
     var_beta = (z_hat_sum/(right_wt-2)) / (right_yy_sum -right_y_sum * right_y_sum/right_wt) ;
                        
     //var_beta = beta_sqr_sum / right_wt - beta_1 * beta_1 / (right_wt * right_wt);
+    */
+		       
+		       
+		       
+	double** w = lstsq(n, m, right_X, z);  // weights
     
+	
+	double** yt = transpose(n, 1, y);
+	
+	double** RIGHT_X_ = transpose(n, m, right_X);
+	double** A = product(m, n, n, m, right_X_, right_X);
+	double** A_ = inverse(m, A);
+	double** B = product(m, m, m, n, A_, right_X_);
+	double** H = product(n, m, m, n, right_X, B);
+	double** I=identity(n,n, right_X);
+	double** IH= I-H;
+	//SSE=Y^T[I-H]Y
+	int  j,  sum1 = 0., a = 0., normal;
+	for (i = 0; i < n; ++i) 
+        {
+            for (j = 0; j < m; ++j)
+            {
+                scanf("%d", &IH[i][j]);
+                a = IH[i][j] * IH[i][j];
+                sum1 = sum1 + a;
+            }
+        }
+	normal = sum1;
+        Rprintf("The normal square of the given matriright_X is = %d\n", normal);
+	var_beta=normal/(n-m-1) ;
+	
+
+	
+	beta_1=w[0][0];
+	Rprintf("right beta_1 is = %d\n", beta_1);
+	       
+		       
+		       
+		       
     right_temp = beta_1;
     right_effect = right_temp * right_temp * right_wt - (1 - alpha) * (1 + train_to_est_ratio) 
                     * right_wt * (var_beta);
