@@ -92,6 +92,7 @@ myxval(int n_xval, CpTable cptable_head, int *x_grp, int maxcat, char **errmsg,
                 ct.ytemp[k] = ct.ydata[i];
                 ct.wtemp[k] = ct.wt[i];
                 ct.trtemp[k] = ct.treatment[i];
+                ct.mtemp[k] = ct.matrix[i];
                 temp += ct.wt[i];
                 k++;
             }
@@ -121,7 +122,7 @@ myxval(int n_xval, CpTable cptable_head, int *x_grp, int maxcat, char **errmsg,
         } else if (split_Rule == 2) {
             // ct:
             (*ct_eval) (k, ct.ytemp, xtree->response_est, xtree->controlMean, xtree->treatMean,
-             &(xtree->risk), ct.wtemp, ct.trtemp, ct.max_y, split_alpha, xtrain_to_est_ratio);
+             &(xtree->risk), ct.wtemp, ct.trtemp, ct.mtemp, ct.max_y, split_alpha, xtrain_to_est_ratio);
         } else if (split_Rule == 3) {
             // fit
             (*ct_eval) (k, ct.ytemp, xtree->response_est, xtree->controlMean, xtree->treatMean, 
