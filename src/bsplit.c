@@ -30,11 +30,13 @@ bsplit(pNode me, int n1, int n2, int minsize, int split_Rule, double alpha, int 
     double **ytemp;
     double *wtemp;
     double *trtemp;
+    double **mtemp;
 
     xtemp = ct.xtemp;
     ytemp = ct.ytemp;
     wtemp = ct.wtemp;
     trtemp = ct.trtemp;
+    mtemp = ct.mtemp;
 
     /*
      * test out the variables 1 at at time
@@ -56,6 +58,7 @@ bsplit(pNode me, int n1, int n2, int minsize, int split_Rule, double alpha, int 
                 ytemp[k] = ct.ydata[kk];
                 wtemp[k] = ct.wt[kk];
                 trtemp[k] = ct.treatment[kk];
+                mtemp[k] = ct.matrix[i][kk];
                 k++;
             }
         }
@@ -70,7 +73,7 @@ bsplit(pNode me, int n1, int n2, int minsize, int split_Rule, double alpha, int 
         } else if (split_Rule == 2) {
             //CT
             (*ct_choose) (k, ytemp, xtemp, nc, ct.min_node, &improve, 
-             &split, ct.csplit, me->risk, wtemp, trtemp, minsize, alpha, train_to_est_ratio);
+             &split, ct.csplit, me->risk, wtemp, trtemp, mtemp, minsize, alpha, train_to_est_ratio);
         } else if (split_Rule == 3) {
             //fit
             (*ct_choose) (k, ytemp, xtemp, nc, ct.min_node, &improve, 
