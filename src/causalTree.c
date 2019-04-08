@@ -87,6 +87,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
 
     double *wt;
     double *treatment;
+    double **matrix;      
     int minsize;
     /* add propensity score: */
     double propensity;
@@ -182,14 +183,21 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.wt = wt;
     ct.treatment = treatment;
            
-    ct.matrix = matrix; //add matrix
+    
            
     ct.iscale = 0.0;
     ct.vcost = REAL(cost2);
     
     ct.xvar = REAL(xvar2);
     ct.NumXval = xvals;
-    
+           
+   //add matrix
+    dptr = REAL(matrix2);
+    ct.matrix = (double **) ALLOC(ct.nvar, sizeof(double *));
+    for (i = 0; i < ct.nvar; i++) {
+        ct.matrix[i] = dptr;
+        dptr += n;
+    }
     
     dptr = REAL(xmat2);
     ct.xdata = (double **) ALLOC(ct.nvar, sizeof(double *));
@@ -295,7 +303,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     train_to_est_ratio = 100;
            
     Rprintf("start ct_init in causalTree.c \n"); 
-    i = (*ct_init) (n, ct.ydata, maxcat, &errmsg, &ct.num_resp, 1, wt, treatment,
+    i = (*ct_init) (n, ct.ydata, maxcat, &errmsg, &ct.num_resp, 1, wt, treatment, X,
          bucketnum, bucketMax, &train_to_est_ratio);
     Rprintf("end ct_init in causalTree.c \n"); 
 
