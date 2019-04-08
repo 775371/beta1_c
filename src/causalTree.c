@@ -58,7 +58,8 @@ SEXP
 causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP method2, 
            SEXP crossmeth2, SEXP crosshonest2, SEXP opt2,
            SEXP minsize2, SEXP p2, SEXP xvals2, SEXP xgrp2,
-        SEXP ymat2, SEXP xmat2, SEXP wt2, SEXP treatment2, SEXP ny2, SEXP cost2, 
+        SEXP ymat2, SEXP xmat2, SEXP wt2, SEXP treatment2, SEXP matrix2,
+           SEXP ny2, SEXP cost2, 
         SEXP xvar2, SEXP split_alpha2, SEXP cv_alpha2, SEXP NumHonest2, SEXP gamma2)
 {
   Rprintf("Enter causaltree.c\n");
@@ -115,6 +116,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     wt = REAL(wt2);
     treatment = REAL(treatment2);
    
+           
     minsize = asInteger(minsize2);
     propensity = asReal(p2);
     split_alpha = asReal(split_alpha2);
