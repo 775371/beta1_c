@@ -2,8 +2,8 @@
 #  The honest re-estimation function.
 #
 
-honest.causalTree <- function(formula, data, weights, treatment, subset, 
-							  est_data, est_weights, est_treatment, est_subset,
+honest.causalTree <- function(formula, data, weights, treatment, subset, matrix,
+							  est_data, est_weights, est_treatment, est_subset, est_matrix,
 							  na.action = na.causalTree, split.Rule, split.Honest,
 							  HonestSampleSize, split.Bucket, bucketNum = 10,
 							  bucketMax = 40, cv.option, cv.Honest, minsize = 2L, model = FALSE,
@@ -11,7 +11,7 @@ honest.causalTree <- function(formula, data, weights, treatment, subset,
 							  cv.alpha = 0.5,cv.gamma=0.5,split.gamma=0.5, cost, ...)  { 
         
 	Call <- match.call()
-print("v1: honest.causalTree.R")
+        print("add control: honest.causalTree.R")
 	indx <- match(c("formula", "data", "weights", "subset"),
 				  names(Call), nomatch = 0L)
 
@@ -37,6 +37,13 @@ print("v1: honest.causalTree.R")
 
 	nobs <- nrow(X)
 	nvar <- ncol(X)
+	
+	#add matrix X: exp, treatment(3)
+	
+	names(treatment) <- rownames(data)
+	m <- eval.parent(temp)
+	treatment <- treatment[(rownames(m))]
+	
 	#treatment <- m$`(treatment)`
 
 	# requirement for treatment status
@@ -364,6 +371,9 @@ print("v1: honest.causalTree.R")
 					   X, # X features for model data
 					   wt, # for model data
 					   treatment, # for model data
+			       
+			                   matrix, #for control and treatment variables
+			       
 					   as.integer(init$numy),
 					   as.double(cost),
 					   as.double(xvar), # for model daa
