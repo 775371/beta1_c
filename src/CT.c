@@ -733,8 +733,9 @@ double** w = lstsq(n, m, left_X, z);  // weights
         }
         
 	Rprintf("nclass in function CT in CT.c is %d\n", nclass);
+	    
         for (i = 0; i < nclass; i++) {
-		Rprintf("i in nclass in function CT in CT.c is %d\n", i);
+		
 		
             if (countn[i] > 0) {
 		    
