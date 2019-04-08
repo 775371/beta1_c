@@ -199,7 +199,7 @@ static double *y_, *z_ , *yz_ ,  *yy_ , *zz_ ;
 
 int
 CTinit(int n, double *y[], int maxcat, char **error,
-        int *size, int who, double *wt, double *treatment, 
+        int *size, int who, double *wt, double *treatment, double **X,
         int bucketnum, int bucketMax, double *train_to_est_ratio)
 {
     if (who == 1 && maxcat > 0) {
@@ -228,7 +228,8 @@ CTinit(int n, double *y[], int maxcat, char **error,
 
 void
 CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean, 
-     double *risk, double *wt, double *treatment, double max_y,
+     double *risk, double *wt, double *treatment, double **X,
+     double max_y,
      double alpha, double train_to_est_ratio)
 {
     int i;
@@ -268,25 +269,13 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     tr_var = tr_sqr_sum / ttreat - temp1 * temp1 / (ttreat * ttreat);
     con_var = con_sqr_sum / (twt - ttreat) - temp0 * temp0 / ((twt - ttreat) * (twt - ttreat));
    
-       // int n = 3;  // rows
-	int m = 2;  // columns
+        //double n = sizeof(X) / sizeof(*X);  // rows
+	double m = sizeof(X[0]) / sizeof(*X[0]);  // columns
 
 	double** X = matrix(n, m);  // inputs
-	double** z = matrix(n, 1);  // outputs
+	//double** z = matrix(n, 1);  // outputs
 
-	// test input
-	X[0][0] = 1;
-	X[0][1] = 3;
-	X[1][0] = 2;
-	X[1][1] = 4;
-	X[2][0] = 1;
-	X[2][1] = 6;
-
-	// test output
-	z[0][0] = 4;
-	z[1][0] = 1;
-	z[2][0] = 3;
-
+	
 	
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
     double** w = lstsq(n, m, X, z);  // weights
