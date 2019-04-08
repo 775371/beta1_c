@@ -182,6 +182,8 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.wt = wt;
     ct.treatment = treatment;
            
+    ct.matrix = matrix; //add matrix
+           
     ct.iscale = 0.0;
     ct.vcost = REAL(cost2);
     
