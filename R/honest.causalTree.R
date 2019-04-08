@@ -40,9 +40,7 @@ honest.causalTree <- function(formula, data, weights, treatment, subset, matrix,
 	
 	#add matrix X: exp, treatment(3)
 	
-	names(treatment) <- rownames(data)
-	m <- eval.parent(temp)
-	treatment <- treatment[(rownames(m))]
+	matrix<-matrix
 	
 	#treatment <- m$`(treatment)`
 
@@ -54,10 +52,10 @@ honest.causalTree <- function(formula, data, weights, treatment, subset, matrix,
 	#if (sum(treatment %in% c(0,1)) != nobs) {
 	#	stop("The treatment status should be 1 or 0 only: 1 represent treated and 0 represent controlled.")
 	#}
-	if (sum(treatment) == 0  ) { #|| sum(treatment) == nobs
+	#if (sum(treatment) == 0  ) { #|| sum(treatment) == nobs
 	  
-		stop("The data only contains treated cases or controlled cases, please check 'treatment' again.") 
-	}
+	#	stop("The data only contains treated cases or controlled cases, please check 'treatment' again.") 
+	#}
 
 	# ---------------------------------------------------------------------------------------
 	# check the honest re-estimation data set:
@@ -85,15 +83,17 @@ honest.causalTree <- function(formula, data, weights, treatment, subset, matrix,
 	est_nobs <- nrow(est_X)
 	est_nvar <- ncol(est_X)
 	
+	est_matrix<-est_matrix
+	
 	if (missing(est_treatment)) {
 	    stop("Note give the treatment status of honest estimation data set!\n ")
 	}
 	#if (sum(est_treatment %in% c(0,1)) != est_nobs) {
 	#    stop("The treatment status should be 1 or 0 only: 1 represent treated and 0 represent controlled.")
 	#}
-	if (sum(est_treatment) == 0 ) { #|| sum(est_treatment) == est_nobs
-	    stop("The data only contains treated cases or controlled cases, please check 'est_treatment' again.") 
-	}
+	#if (sum(est_treatment) == 0 ) { #|| sum(est_treatment) == est_nobs
+	#    stop("The data only contains treated cases or controlled cases, please check 'est_treatment' again.") 
+	#}
 	
 
 	if (est_nvar != nvar) {
@@ -488,7 +488,7 @@ print("come out from honest.causalTree.R")
 		if(ncol(ans$cptable) >= 4) {
 			ans$cptable[,4]  <- ans$cptable[,4] / ans$cptable[1, 4]
 		}
-		ans <- honest.est.causalTree(ans, est_X, est_wts, est_treatment, est_Y)
+		ans <- honest.est.causalTree(ans, est_X, est_wts, est_treatment, est_Y, est_matrix)
 		#estimate honest causaltree with train X and compare with est.causaltree after pruning
 		ans
 }
