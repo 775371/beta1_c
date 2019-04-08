@@ -272,7 +272,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
         //double n = sizeof(X) / sizeof(*X);  // rows
 	double m = sizeof(X[0]) / sizeof(*X[0]);  // columns
 
-	double** X = matrix(n, m);  // inputs
+	//double** X = matrix(n, m);  // inputs
 	//double** z = matrix(n, 1);  // outputs
 
 	
