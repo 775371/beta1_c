@@ -112,7 +112,7 @@ myxval(int n_xval, CpTable cptable_head, int *x_grp, int maxcat, char **errmsg,
        
         
         
-        (*ct_init) (k, ct.ytemp, maxcat, errmsg, &temp, 2, ct.wtemp, ct.trtemp, 
+        (*ct_init) (k, ct.ytemp, maxcat, errmsg, &temp, 2, ct.wtemp, ct.trtemp, ct.mtemp, 
          bucketnum, bucketMax, &xtrain_to_est_ratio);
         
         if (split_Rule == 1) {
