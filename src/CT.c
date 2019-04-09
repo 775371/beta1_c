@@ -139,7 +139,7 @@ void output(int n, int m, double** X, char* T) {
 *
 * @return: linear weights
 */
-double** lstsq(int n, int m, double** X, double** z) {
+double** lstsq(int n, int m, double** X, double** y) {
 
 	// TODO: include bias column
 
