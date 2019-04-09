@@ -193,7 +193,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
            
    //add matrix
     dptr = REAL(matrix2);
-    ct.matrix = (double **) ALLOC(ct.nvar, sizeof(double *));
+    ct.matrix = (double **) ALLOC(n, sizeof(double *));
     for (i = 0; i < n; i++) {
         ct.matrix[i][0] = dptr;
         dptr += n;
