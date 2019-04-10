@@ -270,7 +270,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     con_var = con_sqr_sum / (twt - ttreat) - temp0 * temp0 / ((twt - ttreat) * (twt - ttreat));
    
         //double n = sizeof(X) / sizeof(*X);  // rows
-	double m = sizeof(X[0]) / sizeof(*X[0]);  // columns
+	int m = sizeof(X[0]) / sizeof(*X[0]);  // columns
 
 	//double** X = matrix(n, m);  // inputs
 	//double** z = matrix(n, 1);  // outputs
