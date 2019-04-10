@@ -58,7 +58,7 @@ bsplit(pNode me, int n1, int n2, int minsize, int split_Rule, double alpha, int 
                 ytemp[k] = ct.ydata[kk];
                 wtemp[k] = ct.wt[kk];
                 trtemp[k] = ct.treatment[kk];
-                mtemp[k] = ct.matrix[i][kk];
+                mtemp[k] = ct.matrix[kk];
                 k++;
             }
         }
