@@ -162,7 +162,7 @@ double** lstsq(int n, int m, double** X, double** y) {
 
 	double** A_ = inverse(m, A);
 	double** B = product(m, m, m, n, A_, X_);
-	double** w = product(m, n, n, 1, B, z);
+	double** w = product(m, n, n, 1, B, y);
 
 	output(m, m, A_, "A^T");
 	output(m, n, B, "B=A^T*X^T");
@@ -278,7 +278,7 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	
 	
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-    double** w = lstsq(n, m, X, z);  // weights
+    double** w = lstsq(n, m, X, y);  // weights
     
 	effect=w[0][0];
 	double** yt = transpose(n, 1, y);
@@ -415,7 +415,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 	double** I=identity(n,n,X);
 	double** IH= I-H;
 	//SSE=Y^T[I-H]Y
-	int  j,  sum1 = 0., a = 0., normal;
+	int   sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
         {
             for (j = 0; j < m; ++j)
@@ -516,6 +516,11 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 	    right_X[i][j]= right_X[i+1][j];
 	    left_X[i][j] = X[i][j];
      }       
+		
+            right_y[i][0]= right_y[i+1][0];
+	    left_y[i][0] = y[i][0];
+		
+		
                 /* change treatment */
            /* if (x[i + 1] != x[i] && left_n >= edge &&
                 (int) left_tr >= min_node_size &&
@@ -542,12 +547,12 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
     //var_beta = beta_sqr_sum / left_wt - beta_1 * beta_1 / (left_wt * left_wt);
     */
     
-double** w = lstsq(n, m, left_X, z);  // weights
+double** w = lstsq(n, m, left_X, left_y);  // weights
     
 	
-	double** yt = transpose(n, 1, y);
+	//double** yt = transpose(n, 1, left_y);
 	
-	double** LEFT_X_ = transpose(n, m, left_X);
+	double** left_X_ = transpose(n, m, left_X);
 	double** A = product(m, n, n, m, left_X_, left_X);
 	double** A_ = inverse(m, A);
 	double** B = product(m, m, m, n, A_, left_X_);
@@ -604,18 +609,25 @@ double** w = lstsq(n, m, left_X, z);  // weights
 		       
 		       
 		       
-	double** w = lstsq(n, m, right_X, z);  // weights
+	//double**
+		w = lstsq(n, m, right_X, right_y);  // weights
     
 	
-	double** yt = transpose(n, 1, y);
+	//double** yt = transpose(n, 1, y);
 	
-	double** RIGHT_X_ = transpose(n, m, right_X);
-	double** A = product(m, n, n, m, right_X_, right_X);
-	double** A_ = inverse(m, A);
-	double** B = product(m, m, m, n, A_, right_X_);
-	double** H = product(n, m, m, n, right_X, B);
-	double** I=identity(n,n, right_X);
-	double** IH= I-H;
+	double** right_X_ = transpose(n, m, right_X);
+	//double** 
+		A = product(m, n, n, m, right_X_, right_X);
+	//double** 
+		       A_ = inverse(m, A);
+	//double** 
+		B = product(m, m, m, n, A_, right_X_);
+	//double** 
+		       H = product(n, m, m, n, right_X, B);
+	//double** 
+		       I=identity(n,n, right_X);
+	//double** 
+		       IH= I-H;
 	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
