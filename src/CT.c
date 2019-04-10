@@ -380,6 +380,8 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 // define right_X left_X
     double** right_X;
     double** left_X;
+    double** right_y;
+    double** left_y;
     int m;
 	
     for (i = 0; i < n; i++) {
