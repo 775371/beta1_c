@@ -48,6 +48,7 @@ EXTERN struct {
     double *xtemp;
     double *wt;
     double *treatment;
+    double **matrix;
     
     double **ytemp;
     double *wtemp;              /* temp vector of weights */
