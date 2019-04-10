@@ -2,7 +2,7 @@
  * split.Rule = CT
  */
 // Linear regression
-/* @author: gregorydhill */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,6 +49,35 @@ double** product(int n, int m, int p, int q, double** A, double** B) {
 
 	return C;
 }
+
+double** add(int n, int m, int p, int q, double** A, double** B) {
+	double** D = matrix(n, q);
+
+	for (size_t i = 0; i < n; i++)
+	{
+		for (size_t j = 0; j < m; j++)
+		{
+				D[i][j] = A[i][k] + B[k][j];
+		}
+	}
+	return D;
+}
+
+
+double** sub(int n, int m, int p, int q, double** A, double** B) {
+	double** S = matrix(n, m);
+
+	for (size_t i = 0; i < n; i++)
+	{
+		for (size_t j = 0; j < m; j++)
+		{
+				S[i][j] = A[i][k] - B[k][j];
+		}
+	}
+	return S;
+}
+
+
 
 double** identity(int n, int m, double** X) {
 	double** I = matrix(n, m);
@@ -289,7 +318,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
 	double** I=identity(n,n,X);
-	double** IH= I-H;
+	double** temp= sub(n, n, n, n, I, H);
+	double** IH= product(n, n, n, 1, temp, y);
 	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
@@ -415,7 +445,8 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
 	double** I=identity(n,n,X);
-	double** IH= I-H;
+	double** temp= sub(n, n, n, n, I, H);
+	double** IH= product(n, n, n, 1, temp, y);
 	//SSE=Y^T[I-H]Y
 	int   sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
@@ -560,7 +591,8 @@ double** w = lstsq(n, m, left_X, left_y);  // weights
 	double** B = product(m, m, m, n, A_, left_X_);
 	double** H = product(n, m, m, n, left_X, B);
 	double** I=identity(n,n, left_X);
-	double** IH= I-H;
+	double** temp= sub(n, n, n, n, I, H);
+	double** IH= product(n, n, n, 1, temp, left_y);
 	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
@@ -629,7 +661,8 @@ double** w = lstsq(n, m, left_X, left_y);  // weights
 	//double** 
 		       I=identity(n,n, right_X);
 	//double** 
-		       IH= I-H;
+		      temp= sub(n, n, n, n, I, H);
+	 IH= product(n, n, n, 1, temp, right_y);
 	//SSE=Y^T[I-H]Y
 	//int   j, sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
