@@ -147,7 +147,7 @@ double** lstsq(int n, int m, double** X, double** y) {
 	double** A = product(m, n, n, m, X_, X);
 
 	printf("\n");
-	output(n, 1, z, "y");
+	output(n, 1, y, "y");
 	output(n, m, X, "X");
 	output(m, n, X_, "X^T");
 	output(m, m, A, "A=X*X^T");
@@ -380,6 +380,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 // define right_X left_X
     double** right_X;
     double** left_X;
+    int m;
 	
     for (i = 0; i < n; i++) {
         right_wt += wt[i];
@@ -401,7 +402,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
      
     }
 
-    double** w = lstsq(n, m, X, z);  // weights
+    double** w = lstsq(n, m, X, y);  // weights
     
 	
 	double** yt = transpose(n, 1, y);
@@ -510,7 +511,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 		
 		
 	//matrix right left
-	for ( int j = 0; j < col; j++ )
+	for ( int j = 0; j < m; j++ ) //row
     {
 	    right_X[i][j]= right_X[i+1][j];
 	    left_X[i][j] = X[i][j];
