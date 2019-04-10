@@ -147,10 +147,13 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     if (split_Rule <= NUM_SPLIT_RULE && crossmeth <= NUM_CROSSMETH) {
 
         Rprintf("initialize split in causalTree.c\n");
+        
         split_id = split_Rule - 1;
         cv_id = crossmeth - 1;
         ct_init = split_func_table[split_id].init_split;
+               Rprintf("ct_init in causalTree.c\n");
         ct_choose = split_func_table[split_id].choose_split;
+               Rprintf("ct_choose in causalTree.c\n");
         ct_eval = split_func_table[split_id].eval;
         ct_xeval = cv_func_table[cv_id].xeval;
         ct.num_y = asInteger(ny2);
@@ -192,8 +195,12 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.NumXval = xvals;
            
    //add matrix
-    dptr = REAL(matrix2);
+    Rprintf("ct.matrix\n");
+           
     ct.matrix = (double **) ALLOC(n, sizeof(double *));
+           Rprintf("matrix2 is = %d\n", class(matrix2));
+    dptr = REAL(matrix2);
+           Rprintf("end ct.matrix\n");
     for (i = 0; i < n; i++) {
         ct.matrix[i] = dptr;
         dptr += n;
