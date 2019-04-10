@@ -631,7 +631,7 @@ double** w = lstsq(n, m, left_X, left_y);  // weights
 	//double** 
 		       IH= I-H;
 	//SSE=Y^T[I-H]Y
-	int  j,  sum1 = 0., a = 0., normal;
+	//int   j, sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
         {
             for (j = 0; j < m; ++j)
