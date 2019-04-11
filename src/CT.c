@@ -318,8 +318,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
 	double** I=identity(n,n,X);
-	double** temp= sub(n, n, n, n, I, H);
-	double** IH= product(n, n, n, 1, temp, y);
+	double** N= sub(n, n, n, n, I, H);
+	double** IH= product(n, n, n, 1, N, y);
 	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
@@ -591,8 +591,8 @@ double** w = lstsq(n, m, left_X, left_y);  // weights
 	double** B = product(m, m, m, n, A_, left_X_);
 	double** H = product(n, m, m, n, left_X, B);
 	double** I=identity(n,n, left_X);
-	double** temp= sub(n, n, n, n, I, H);
-	double** IH= product(n, n, n, 1, temp, left_y);
+	double** N= sub(n, n, n, n, I, H);
+	double** IH= product(n, n, n, 1, N, left_y);
 	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
