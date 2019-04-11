@@ -661,8 +661,8 @@ double** w = lstsq(n, m, left_X, left_y);  // weights
 	//double** 
 		       I=identity(n,n, right_X);
 	//double** 
-		      temp= sub(n, n, n, n, I, H);
-	 IH= product(n, n, n, 1, temp, right_y);
+		     N= sub(n, n, n, n, I, H);
+	 IH= product(n, n, n, 1, N, right_y);
 	//SSE=Y^T[I-H]Y
 	//int   j, sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
