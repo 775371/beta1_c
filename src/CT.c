@@ -445,8 +445,8 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 	double** B = product(m, m, m, n, A_, X_);
 	double** H = product(n, m, m, n, X, B);
 	double** I=identity(n,n,X);
-	double** temp= sub(n, n, n, n, I, H);
-	double** IH= product(n, n, n, 1, temp, y);
+	double** N= sub(n, n, n, n, I, H);
+	double** IH= product(n, n, n, 1, N, y);
 	//SSE=Y^T[I-H]Y
 	int   sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
