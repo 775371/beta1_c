@@ -57,7 +57,7 @@ double** add(int n, int m, int p, int q, double** A, double** B) {
 	{
 		for (size_t j = 0; j < m; j++)
 		{
-				D[i][j] = A[i][k] + B[k][j];
+				D[i][j] = A[i][j] + B[i][j];
 		}
 	}
 	return D;
@@ -71,7 +71,7 @@ double** sub(int n, int m, int p, int q, double** A, double** B) {
 	{
 		for (size_t j = 0; j < m; j++)
 		{
-				S[i][j] = A[i][k] - B[k][j];
+				S[i][j] = A[i][j] - B[i][j];
 		}
 	}
 	return S;
