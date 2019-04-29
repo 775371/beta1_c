@@ -467,7 +467,7 @@ honest_estimate_causalTree(SEXP dimx, SEXP nnode,
                            SEXP vnum, 
                            SEXP split2,
                            SEXP csplit2, SEXP usesur, 
-                           SEXP xdata2, SEXP wt2, SEXP treatment2, SEXP y2, matrix2,
+                           SEXP xdata2, SEXP wt2, SEXP treatment2, SEXP y2, SEXP matrix2,
                            SEXP xmiss2)
 {
     int n = asInteger(dimx);
