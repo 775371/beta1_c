@@ -215,7 +215,7 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
                             const double *split2, const int *csplit2, const int *usesur,
                             int *n1, double *wt1, double *dev1, double *yval1, const double *xdata2, 
                             const double *wt2, const double *treatment2, const double *y2,
-                            const double **matrix2, //add matrix
+                            const double *matrix2, //add matrix
                             const int *xmiss2, int *where)
 {
     Rprintf("honest_estimate_causalTree.c\n");
@@ -230,6 +230,8 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
     const double *split[4];
     const int **csplit = NULL, **xmiss;
     const double **xdata;
+	    //input 
+    const double **matrix;
     double *trs = NULL;
     double *cons = NULL; 
     double *trsums = NULL; 
@@ -313,11 +315,16 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
     }
     xmiss = (const int **) ALLOC((int) dimx[1], sizeof(int *));
     xdata = (const double **) ALLOC((int) dimx[1], sizeof(double *));
+	    // alloacate
+    matrix = (const double **) ALLOC((int) dimx[1], sizeof(double *));
+	    
      Rprintf("The dimx  in honest_estimate_causalTree.c is %d\n", dimx);
+	    
     for (i = 0; i < dimx[1]; i++) {
         xmiss[i] = &(xmiss2[i * dimx[0]]);
         xdata[i] = &(xdata2[i * dimx[0]]);
-     Rprintf("before current node\n");
+	matrix[i] = &(matrix2[i * dimx[0]]);
+    
     }
     
 
