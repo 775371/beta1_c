@@ -438,11 +438,12 @@ next:
            //double n = sizeof(matrix) / sizeof(*matrix);
 	for ( int j = 0; j < m; j++ ) //row
     {
-	    matrix[i][j]= matrix[i+1][j];
+	    double tempM[i][j]= matrix[i][j];
 	   
      }       
+          double tempY[i][0] = tempY[i][0];
           
-           double** w = lstsq(n, m, matrix, y);
+           double** w = lstsq(n, m, tempM, tempY);
           yval1[origindx] =w[0][0] ;
           dev1[origindx] = trsqrsums[origindx] - trs[origindx] * tr_mean * tr_mean 
                 + consqrsums[origindx] - cons[origindx] * con_mean * con_mean;
