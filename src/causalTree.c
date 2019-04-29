@@ -198,7 +198,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     Rprintf("ct.matrix\n");
            
     ct.matrix = (double **) ALLOC(n, sizeof(double *));
-           Rprintf("matrix2 is = %d\n", class(matrix2));
+           Rprintf("matrix2 is = %d\n", matrix2);
     dptr = REAL(matrix2);
            Rprintf("end ct.matrix\n");
     for (i = 0; i < n; i++) {
