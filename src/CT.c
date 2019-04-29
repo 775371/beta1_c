@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 double** matrix(int n, int m) {
 	double **X;
@@ -433,7 +434,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 	
      
     }
-
+    memcpy(*right_X, *X, sizeof(double));
     double** w = lstsq(n, m, X, y);  // weights
     
 	
