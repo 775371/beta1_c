@@ -232,8 +232,8 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
     const double **xdata;
 	    //input 
     const double **matrix;
-    const double **tempM;
-    const double **tempY;
+    double **tempM;
+    double **tempY;
 	    
     double *trs = NULL;
     double *cons = NULL; 
