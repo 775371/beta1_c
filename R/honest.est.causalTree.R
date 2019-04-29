@@ -1,7 +1,7 @@
 #
 # honest re-estimation and change the frame of object using estimation sample
 #
-honest.est.causalTree <- function(fit, x, wt, treatment, y)
+honest.est.causalTree <- function(fit, x, wt, treatment, y,matrix)
 {
     frame <- fit$frame
     
@@ -31,6 +31,7 @@ honest.est.causalTree <- function(fit, x, wt, treatment, y)
                   as.double(wt),
                   as.double(treatment),
                   as.double(y),
+                  as.double(matrix),
                   as.integer(is.na(x)))
     return (fit)
 }
