@@ -425,9 +425,8 @@ next:
         int origindx = invertdx[i];
      
         //base case
-        /*if (trs[origindx] != 0 && cons[origindx] != 0) {*/
+        
           if (trs[origindx] != 0 && cons[origindx] != 0) {
-            /*double tr_mean = trsums[origindx] * 1.0 / trs[origindx];*/
             double tr_mean = trsums[origindx] * 1.0 / wt1[origindx];
             double con_mean = consums[origindx] * 1.0 / cons[origindx];
             double tt_mean =  yy_sum[origindx]* 1.0 / wt1[origindx];
