@@ -2,7 +2,210 @@
  * Do honest causalTree estimation with parameters
  * 
  */
- 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double** matrix(int n, int m) {
+	double **X;
+	X = malloc(n * sizeof(*X));
+	for (int i = 0; i < n; i++)
+		X[i] = malloc(m * sizeof(*X[i]));
+	return X;
+}
+
+void clear(int n, double** X) {
+	for (int i = 0; i < n; i++)
+		free(X[i]);
+	free(X);
+}
+
+double** transpose(int n, int m, double** X) {
+	double** X_ = matrix(m, n);
+	for (size_t i = 0; i < m; i++) {
+		for (size_t j = 0; j < n; j++) {
+			X_[i][j] = X[j][i];
+		}
+	}
+	return X_;
+}
+
+double** product(int n, int m, int p, int q, double** A, double** B) {
+	double** C = matrix(n, q);
+
+	for (size_t i = 0; i < n; i++)
+		for (size_t j = 0; j < q; j++)
+			C[i][j] = 0;
+
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < q; j++) {
+			for (size_t k = 0; k < p; k++) {
+				C[i][j] += A[i][k] * B[k][j];
+			}
+		}
+	}
+
+	return C;
+}
+
+double** add(int n, int m, int p, int q, double** A, double** B) {
+	double** D = matrix(n, q);
+
+	for (size_t i = 0; i < n; i++)
+	{
+		for (size_t j = 0; j < m; j++)
+		{
+				D[i][j] = A[i][j] + B[i][j];
+		}
+	}
+	return D;
+}
+
+
+double** sub(int n, int m, int p, int q, double** A, double** B) {
+	double** S = matrix(n, m);
+
+	for (size_t i = 0; i < n; i++)
+	{
+		for (size_t j = 0; j < m; j++)
+		{
+				S[i][j] = A[i][j] - B[i][j];
+		}
+	}
+	return S;
+}
+
+
+
+double** identity(int n, int m, double** X) {
+	double** I = matrix(n, m);
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < m; j++) {
+			if (i == j) 
+				I[i][j] = 1;
+			else I[i][j] = 0;
+		}
+	}
+	return I;
+}
+
+
+double** get_minor(int row, int col, int n, double** M) {
+	int k = 0;
+	int l = 0;
+	int s = n - 1;
+	double** m = matrix(s, s);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (i != row && j != col) {
+				m[k][l] = M[i][j]; l++;
+			}
+		}
+		if (i != row) k++;
+		l = 0;
+	}
+	return m;
+}
+
+double determinant(int n, double** M) {
+	if (n == 2)
+		return (M[0][0] * M[1][1]) - (M[0][1] * M[1][0]);
+
+	double det = 0;
+	for (size_t j = 0; j < n; j++) {
+		double** m = get_minor(0, j, n, M);
+		det += pow((-1), j)*M[0][j] * determinant(n - 1, m);
+		clear(n, m);
+	}
+	return det;
+}
+
+double** inverse(int n, double** M) {
+	double** C = matrix(n, n);
+	double d = determinant(n, M);
+
+	if (n == 2) {
+		C[0][0] = M[1][1] / d;
+		C[0][1] = (-1)*M[0][1] / d;
+		C[1][0] = (-1)*M[1][0] / d;
+		C[1][1] = M[0][0] / d;
+		return C;
+	}
+
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < n; j++) {
+			double** m = get_minor(i, j, n, M);
+			C[i][j] = (pow((-1), i + j)*determinant(n - 1, m)) / d;
+		}
+	}
+
+	double** A = transpose(n, n, C);
+	clear(n, C);
+	return A;
+}
+
+void output(int n, int m, double** X, char* T) {
+	printf("%s\n---\n", T);
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < m; j++) {
+			if (j == m - 1) printf("%.2f", X[i][j]);
+			else printf("%.2f, ", X[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+/*
+* Linear Least Squares Optimization - Normal Equations Approach
+*
+* @param n: number of input rows
+* @param m: number of input columns
+* @param X: input matrix
+* @param y: output vector
+*
+* @return: linear weights
+*/
+double** lstsq(int n, int m, double** X, double** y) {
+
+	// TODO: include bias column
+
+	double** X_ = transpose(n, m, X);
+	double** A = product(m, n, n, m, X_, X);
+
+	printf("\n");
+	output(n, 1, y, "y");
+	output(n, m, X, "X");
+	output(m, n, X_, "X^T");
+	output(m, m, A, "A=X*X^T");
+
+	// non-square matrices do not have determinant
+	double d = determinant(m, A);
+	if (d == 0) {
+		printf("Matrix non-invertible.\n\n");
+		exit(-1);
+	}
+	else printf("Determinant: %.1f\n\n", d);
+
+	double** A_ = inverse(m, A);
+	double** B = product(m, m, m, n, A_, X_);
+	double** w = product(m, n, n, 1, B, y);
+
+	output(m, m, A_, "A^T");
+	output(m, n, B, "B=A^T*X^T");
+	output(m, 1, w, "B*y");
+
+	clear(n, X_);
+	clear(n, A);
+	clear(n, A_);
+	clear(n, B);
+
+	return w;
+}
+
+
+//----------------------end--------------------------------------------------
+
 #include "causalTree.h"
 #include "causalTreeproto.h"
 
@@ -12,6 +215,7 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
                             const double *split2, const int *csplit2, const int *usesur,
                             int *n1, double *wt1, double *dev1, double *yval1, const double *xdata2, 
                             const double *wt2, const double *treatment2, const double *y2,
+                            const double *matrix2, //add matrix
                             const int *xmiss2, int *where)
 {
     Rprintf("honest_estimate_causalTree.c\n");
@@ -55,6 +259,11 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
     yz_sum = (double *) ALLOC(nnode, sizeof(double));
     yy_sum = (double *) ALLOC(nnode, sizeof(double));
     zz_sum = (double *) ALLOC(nnode, sizeof(double));
+     
+     
+     
+     
+    // add matrix 
      
     // initialize:
     for (i = 0; i < nnode; i++) {
@@ -219,11 +428,15 @@ next:
             /*yval1[origindx] = tr_mean - con_mean;*/
             /*dev1[origindx] = trsqrsums[origindx] - trs[origindx] * tr_mean * tr_mean 
                 + consqrsums[origindx] - cons[origindx] * con_mean * con_mean;*/
-           yval1[origindx] =  (wt1[origindx] * yz_sum[origindx] - z_sum[origindx] * y_sum[origindx]) / (wt1[origindx] * yy_sum[origindx] - y_sum[origindx] * y_sum[origindx]);
-           dev1[origindx] = yy_sum[origindx] -  tt_mean * tt_mean;
+           int m = sizeof(matrix[0]) / sizeof(*matrix[0]);
+           double n = sizeof(matrix) / sizeof(*matrix);
+           double** w = lstsq(n, m, matrix, y);
+          yval1[origindx] =w[0][0] ;
+          dev1[origindx] = trsqrsums[origindx] - trs[origindx] * tr_mean * tr_mean 
+                + consqrsums[origindx] - cons[origindx] * con_mean * con_mean;
            
-           Rprintf("The trsqrsums in  honest.causaltree.c is %d\n", trsqrsums);
-           Rprintf("The consqrsums in  honest.causaltree.c is %d\n", consqrsums);
+         //  Rprintf("The trsqrsums in  honest.causaltree.c is %d\n", trsqrsums);
+          // Rprintf("The consqrsums in  honest.causaltree.c is %d\n", consqrsums);
            
         } else {
             int parentdx = invertdx[i / 2];
@@ -248,7 +461,7 @@ honest_estimate_causalTree(SEXP dimx, SEXP nnode,
                            SEXP vnum, 
                            SEXP split2,
                            SEXP csplit2, SEXP usesur, 
-                           SEXP xdata2, SEXP wt2, SEXP treatment2, SEXP y2,
+                           SEXP xdata2, SEXP wt2, SEXP treatment2, SEXP y2, matrix2,
                            SEXP xmiss2)
 {
     int n = asInteger(dimx);
@@ -258,7 +471,7 @@ honest_estimate_causalTree(SEXP dimx, SEXP nnode,
             INTEGER(vnum), REAL(split2), INTEGER(csplit2),
             INTEGER(usesur), 
             INTEGER(n1), REAL(wt1), REAL(dev1), REAL(yval1), 
-            REAL(xdata2), REAL(wt2), REAL(treatment2), REAL(y2),
+            REAL(xdata2), REAL(wt2), REAL(treatment2), REAL(y2), REAL(matrix2),
             INTEGER(xmiss2), INTEGER(where));
     UNPROTECT(1);
     return where;
