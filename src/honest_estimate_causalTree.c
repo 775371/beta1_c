@@ -232,6 +232,9 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
     const double **xdata;
 	    //input 
     const double **matrix;
+    const double **tempM;
+    const double **tempY;
+	    
     double *trs = NULL;
     double *cons = NULL; 
     double *trsums = NULL; 
@@ -315,8 +318,10 @@ honest_estimate_causalTree0(const int *dimx, int nnode, int nsplit, const int *d
     }
     xmiss = (const int **) ALLOC((int) dimx[1], sizeof(int *));
     xdata = (const double **) ALLOC((int) dimx[1], sizeof(double *));
-	    // alloacate
+	    // alloacate input matrix
     matrix = (const double **) ALLOC((int) dimx[1], sizeof(double *));
+     tempM = (const double **) ALLOC((int) dimx[1], sizeof(double *));
+     tempY = (const double **) ALLOC((int) dimx[1], sizeof(double *));
 	    
      Rprintf("The dimx  in honest_estimate_causalTree.c is %d\n", dimx);
 	    
@@ -438,10 +443,10 @@ next:
            //double n = sizeof(matrix) / sizeof(*matrix);
 	for ( int j = 0; j < m; j++ ) //row
     {
-	    double tempM[i][j]= matrix[i][j];
+	     tempM[i][j]= matrix[i][j];
 	   
      }       
-          double tempY[i][0] = tempY[i][0];
+           tempY[i][0] = tempY[i][0];
           
            double** w = lstsq(n, m, tempM, tempY);
           yval1[origindx] =w[0][0] ;
