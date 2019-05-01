@@ -223,10 +223,10 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.matrix = (double **) ALLOC(n, sizeof(double *));     
     dptr = REAL(matrix2);      
     for (i = 0; i < n; i++) {
-               for (j = 0; j < ct.nmatrix; j++) {
-                          ct.matrix[i][j] = dptr;
-                          dptr ++;
-               }
+              // for (j = 0; j < ct.nmatrix; j++) {
+                          ct.matrix[i] = dptr;
+                          dptr +=ct.nmatrix;
+              // }
     }
     /*
      * allocate some scratch
