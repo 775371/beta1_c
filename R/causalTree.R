@@ -21,7 +21,7 @@ causalTree <- function(formula, data, weights, treatment, subset, matrix,
 	temp[[1L]] <- quote(stats::model.frame) 
 	names(treatment) <- rownames(data)
 	m <- eval.parent(temp)
-	treatment <- treatment[(rownames(m))]
+	#treatment <- treatment[(rownames(m))]
 	
 	Terms <- attr(m, "terms")
 	if (any(attr(Terms, "order") > 1L))
@@ -331,6 +331,7 @@ causalTree <- function(formula, data, weights, treatment, subset, matrix,
 					   X, # X features for model data
 					   wt, # for model data
 					   treatment, # for model data
+			       matrix, #var in regression
 					   as.integer(init$numy),
 					   as.double(cost),
 					   as.double(xvar), # for model daa
