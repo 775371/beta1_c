@@ -146,8 +146,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     
     if (split_Rule <= NUM_SPLIT_RULE && crossmeth <= NUM_CROSSMETH) {
 
-        Rprintf("initialize split in causalTree.c\n");
-        
+       
         split_id = split_Rule - 1;
         cv_id = crossmeth - 1;
         ct_init = split_func_table[split_id].init_split;
@@ -157,6 +156,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
         ct_eval = split_func_table[split_id].eval;
         ct_xeval = cv_func_table[cv_id].xeval;
         ct.num_y = asInteger(ny2);
+        
     } else {
         error(_("Invalid value for 'split.Rule' or 'cv.option' "));
     }
@@ -180,12 +180,12 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.n = nrows(xmat2);
     ct.NumHonest = NumHonest;
     
-    n = ct.n;                   
+    n = ct.n;              // matrix rows     
     ct.nvar = ncols(xmat2);
     ct.numcat = INTEGER(ncat2);
     ct.wt = wt;
     ct.treatment = treatment;
-           
+    ct.num_matrix =ncols(matrix2); //matrix columns      
     
            
     ct.iscale = 0.0;
@@ -194,17 +194,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.xvar = REAL(xvar2);
     ct.NumXval = xvals;
            
-   //add matrix
-    Rprintf("ct.matrix\n");
-           
-    ct.matrix = (double **) ALLOC(n, sizeof(double *));
-           Rprintf("matrix2 is = %d\n", matrix2);
-    dptr = REAL(matrix2);
-           Rprintf("end ct.matrix\n");
-    for (i = 0; i < n; i++) {
-        ct.matrix[i] = dptr;
-        dptr += n;
-    }
+   
         
     
     dptr = REAL(xmat2);
@@ -228,6 +218,17 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.max_y = temp2;
     ct.propensity = propensity;
     
+    //add matrix
+    Rprintf("ct.matrix\n");
+           
+    ct.matrix = (double **) ALLOC(n, sizeof(double *));
+           Rprintf("matrix2 is = %d\n", matrix2);
+    dptr = REAL(matrix2);
+           Rprintf("end ct.matrix\n");
+    for (i = 0; i < n; i++) {
+        ct.matrix[i] = dptr;
+        dptr += ct.num_matrix;
+    }
     /*
      * allocate some scratch
      */
@@ -237,7 +238,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.ytemp = (double **) ALLOC(n, sizeof(double *));
     ct.wtemp = (double *) ALLOC(n, sizeof(double));
     ct.trtemp = (double *) ALLOC(n, sizeof(double));
-    ct.mtemp = (double **) ALLOC(n, sizeof(double *));
+    ct.mtemp = (double **) ALLOC(n, sizeof(double *)); // matrix temp
     /*
      * create a matrix of sort indices, one for each continuous variable
      *   This sort is "once and for all".
