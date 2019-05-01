@@ -258,7 +258,7 @@ CTinit(int n, double *y[], int maxcat, char **error,
 
 void
 CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean, 
-     double *risk, double *wt, double *treatment, double **X,
+     double *risk, double *wt, double *treatment, double *X[],
      double max_y,
      double alpha, double train_to_est_ratio)
 {
@@ -300,8 +300,8 @@ CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean,
     con_var = con_sqr_sum / (twt - ttreat) - temp0 * temp0 / ((twt - ttreat) * (twt - ttreat));
    
         //double n = sizeof(X) / sizeof(*X);  // rows
-	int m = sizeof(X[0]) / sizeof(*X[0]);  // columns
-
+	//int m = sizeof(X[0]) / sizeof(*X[0]);  // columns
+int m=1;
 	//double** X = matrix(n, m);  // inputs
 	//double** z = matrix(n, 1);  // outputs
 
