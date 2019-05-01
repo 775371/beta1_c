@@ -21,7 +21,7 @@ honest.causalTree <- function(formula, data, weights, treatment, subset, matrix,
 	temp[[1L]] <- quote(stats::model.frame) 
 	names(treatment) <- rownames(data)
 	m <- eval.parent(temp)
-	treatment <- treatment[(rownames(m))]
+	#treatment <- treatment[(rownames(m))]
 
 
 	Terms <- attr(m, "terms")
