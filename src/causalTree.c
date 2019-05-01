@@ -87,7 +87,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
 
     double *wt;
     double *treatment;
-    double **matrix;      
+    //double **matrix;      
     int minsize;
     /* add propensity score: */
     double propensity;
