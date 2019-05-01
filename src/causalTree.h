@@ -84,6 +84,7 @@ EXTERN struct {
     double propensity;          /* propensity score used in this causal Tree */
     int NumHonest;              /* NumHonest for CT-H cross-validation function*/
     int NumXval;                /* number of cross validation data sets */
+    int  nmatrix                /* columns of matrix*/
 } ct;
 
 EXTERN struct cptable *cptable_tail;
