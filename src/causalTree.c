@@ -205,7 +205,6 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     }
     
     ct.ydata = (double **) ALLOC(n, sizeof(double *));
-    
     dptr = REAL(ymat2);
     temp2 = 0;
     for (i = 0; i < n; i++) {
@@ -219,15 +218,15 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.propensity = propensity;
     
     //add matrix
-    Rprintf("ct.matrix\n");
+    
            
-    ct.matrix = (double **) ALLOC(n, sizeof(double *));
-           Rprintf("matrix2 is = %d\n", matrix2);
-    dptr = REAL(matrix2);
-           Rprintf("end ct.matrix\n");
+    ct.matrix = (double **) ALLOC(n, sizeof(double *));     
+    dptr = REAL(matrix2);      
     for (i = 0; i < n; i++) {
-        ct.matrix[i] = dptr;
-        dptr += ct.nmatrix;
+               for (j = 0; j < ct.nmatrix; j++) {
+                          ct.matrix[i][j] = dptr;
+                          dptr ++;
+               }
     }
     /*
      * allocate some scratch
@@ -337,7 +336,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     } else if (split_Rule == 2) {   
         // ct:
         (*ct_eval) (n, ct.ydata, tree->response_est, tree->controlMean, tree->treatMean, 
-         &(tree->risk), wt, treatment,  matrix, ct.max_y, split_alpha, train_to_est_ratio); //add matrix X
+         &(tree->risk), wt, treatment,  ct.matrix, ct.max_y, split_alpha, train_to_est_ratio); //add matrix X
                Rprintf("split rule in causal tree.c is %d.\n", split_Rule);
     } else if (split_Rule == 3) {
         //fit
