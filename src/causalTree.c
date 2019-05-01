@@ -185,7 +185,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     ct.numcat = INTEGER(ncat2);
     ct.wt = wt;
     ct.treatment = treatment;
-    ct.num_matrix =ncols(matrix2); //matrix columns      
+    ct.num_matrix = ncols(matrix2); //matrix columns      
     
            
     ct.iscale = 0.0;
