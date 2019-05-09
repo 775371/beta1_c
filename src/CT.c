@@ -261,7 +261,7 @@ void
 CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean, 
      double *risk, double *wt, double *treatment, double **X,
      double max_y, double alpha, double train_to_est_ratio)
-{ Rprintf("X in CTinit is %d.\n", X);
+{ 
     int i;
     double temp0 = 0., temp1 = 0., twt = 0.; /* sum of the weights */ 
     double ttreat = 0.;
@@ -306,7 +306,7 @@ int m=1;
 	//double** z = matrix(n, 1);  // outputs
 
 	
-	
+	Rprintf("X in CTinit is %d.\n", X);
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
     double** w = lstsq(n, m, X, y);  // weights
     
