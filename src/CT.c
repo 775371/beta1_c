@@ -306,10 +306,10 @@ int m=1;
 	//double** z = matrix(n, 1);  // outputs
 
 	
-	Rprintf("X in CTinit is %d.\n", X);
+	
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
     double** w = lstsq(n, m, X, y);  // weights
-    
+    Rprintf("X in CTinit is %d.\n", X);
 	effect=w[0][0];
 	double** yt = transpose(n, 1, y);
 	
