@@ -228,8 +228,10 @@ static double *y_, *z_ , *yz_ ,  *yy_ , *zz_ ;
 
 
 int
-CTinit(int n, double *y[], int maxcat, char **error,
-        int *size, int who, double *wt, double *treatment, double **X,
+CTinit(int n, 
+       double *y[], 
+       int maxcat, char **error,
+        int *size, int who, double *wt, double *treatment, double **X, double **Y, 
         int bucketnum, int bucketMax, double *train_to_est_ratio)
 {
 	
@@ -258,8 +260,9 @@ CTinit(int n, double *y[], int maxcat, char **error,
 }
 
 void
-CTss(int n, double *y[], double *value,  double *con_mean, double *tr_mean, 
-     double *risk, double *wt, double *treatment, double **X,
+CTss(int n, double *y[], 
+double *value,  double *con_mean, double *tr_mean, 
+     double *risk, double *wt, double *treatment, double **X, double **Y,
      double max_y, double alpha, double train_to_est_ratio)
 { 
     int i;
@@ -308,10 +311,10 @@ int m=1;
 	
 	
     /* Y= beta_0 + beta_1 treatment + beta_2 surgeon +beta_3 anesthesia attending , ONLY one pair*/
-    double** w = lstsq(n, m, X, y);  // weights
+    double** w = lstsq(n, m, X, Y);  // weights
     Rprintf("X in CTinit is %d.\n", X);
 	effect=w[0][0];
-	double** yt = transpose(n, 1, y);
+	double** yt = transpose(n, 1, Y);
 	
 	double** X_ = transpose(n, m, X);
 	double** A = product(m, n, n, m, X_, X);
@@ -320,7 +323,7 @@ int m=1;
 	double** H = product(n, m, m, n, X, B);
 	double** I=identity(n,n,X);
 	double** N= sub(n, n, n, n, I, H);
-	double** IH= product(n, n, n, 1, N, y);
+	double** IH= product(n, n, n, 1, N, Y);
 	//SSE=Y^T[I-H]Y
 	int  j,  sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
@@ -365,7 +368,7 @@ int m=1;
 
 
 void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, double *split, 
-        int *csplit, double myrisk, double *wt, double *treatment, double **X,
+        int *csplit, double myrisk, double *wt, double *treatment, double **X, double **Y,
 	int minsize, double alpha, double train_to_est_ratio)
 {
           
@@ -434,10 +437,10 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
      
     }
     memcpy(*right_X, *X, sizeof(double));
-    double** w = lstsq(n, m, X, y);  // weights
+    double** w = lstsq(n, m, X, Y);  // weights
     
 	
-	double** yt = transpose(n, 1, y);
+	double** yt = transpose(n, 1, Y);
 	
 	double** X_ = transpose(n, m, X);
 	double** A = product(m, n, n, m, X_, X);
@@ -446,7 +449,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
 	double** H = product(n, m, m, n, X, B);
 	double** I=identity(n,n,X);
 	double** N= sub(n, n, n, n, I, H);
-	double** IH= product(n, n, n, 1, N, y);
+	double** IH= product(n, n, n, 1, N, Y);
 	//SSE=Y^T[I-H]Y
 	int   sum1 = 0., a = 0., normal;
 	for (i = 0; i < n; ++i) 
@@ -551,7 +554,7 @@ void CT(int n, double *y[], double *x, int nclass, int edge, double *improve, do
      }       
 		
             right_y[i][0]= right_y[i+1][0];
-	    left_y[i][0] = y[i][0];
+	    left_y[i][0] = Y[i][0];
 		
 		
                 /* change treatment */
