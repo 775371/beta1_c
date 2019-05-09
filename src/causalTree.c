@@ -225,7 +225,7 @@ causalTree(SEXP ncat2, SEXP split_Rule2, SEXP bucketnum2, SEXP bucketMax2, SEXP 
     for (i = 0; i < n; i++) {
               // for (j = 0; j < ct.nmatrix; j++) {
                           ct.matrix[i] = dptr;
-                          dptr +=ct.nmatrix;
+                          dptr +=n;
               // }
     }
     /*
